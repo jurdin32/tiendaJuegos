@@ -1,0 +1,99 @@
+{% extends 'index.html' %}
+{% block main %}
+    {% load mathfilters %}
+    <div role="main" class="main shop pt-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                     <aside class="sidebar">
+                        <h5 class="font-weight-semi-bold pt-3">Datos del Usuario</h5>
+                        <ul class="nav nav-list flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                       href="{% url 'datos' %}">Actualizar datos</a>
+                                </li>
+                        </ul>
+                    </aside>
+                    <aside class="sidebar">
+                        <h5 class="font-weight-semi-bold pt-3">Pedidos</h5>
+                        <p style="font-weight: bold">Seleccione un pedido para ver los detalles</p>
+                        <ul class="nav nav-list flex-column" style="overflow-y: auto">
+                            {% for pedido in pedidos %}
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                       href="?id={{ pedido.id }}">{{ pedido.fecha }}-{{ pedido.detalle }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </aside>
+                </div>
+                <div class="col-lg-8" style="height: 500px">
+                    {% if pedido %}
+                        <h1>Pedidos del Usuario:</h1>
+                        <table class="table table-bordered" style="text-align: center">
+                            <thead>
+                            <th>Fecha</th>
+                            <th>No de Pedido</th>
+                            <th>Subtotal</th>
+                            <th>IVA</th>
+                            <th>Total</th>
+                            <th>Detalles</th>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{ pedido.fecha }}</td>
+                                <td>{{ pedido.id|stringformat:"010d" }}</td>
+                                <td>{{ pedido.subtotal }}</td>
+                                <td>{{ pedido.iva }}</td>
+                                <td>{{ pedido.total }}</td>
+                                <td><a href="{% url 'perfil' %}?pedido={{ pedido.id }}"><i
+                                        class="fa fa-angle-right btn btn-primary"></i></a></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    {% endif %}
+                    {% if request.GET.pedido %}
+                        <h1>Detalle del Pedido No: {{ pedido.id|stringformat:"010d" }}</h1>
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                            <th>Pedido</th>
+                            <th>Nombre del Producto</th>
+                            <th>Subtotal</th>
+                            <th>IVA</th>
+                            <th>Total</th>
+                            </thead>
+                            <tbody>
+                            {% for ped in pedido.detallepedido_set.all %}
+
+
+                                <tr>
+                                    <td>{{ ped.pedido.id|stringformat:"010d" }}</td>
+                                    <td>Juego: {{ ped.producto.nombre }}</td>
+                                    <td>{{ ped.subtotal|floatformat:2 }}</td>
+                                    <td>{{ ped.iva|floatformat:2 }}</td>
+                                    <td>{{ ped.total|floatformat:2 }}</td>
+                                </tr>
+
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+{% block script %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script>
+        function activar() {
+            {% if request.GET.page %}
+                $("#{{ request.GET.page }}").addClass('active');
+            {% endif %}
+        }
+
+        activar()
+    </script>
+{% endblock %}

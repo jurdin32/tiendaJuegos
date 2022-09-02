@@ -1,0 +1,190 @@
+{% extends 'index.html' %}
+{% block main %}
+{% load mathfilters %}
+    <div role="main" class="main shop pt-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-2">
+                    <aside class="sidebar">
+                        <h5 class="font-weight-semi-bold pt-3">Categorías</h5>
+                        <ul class="nav nav-list flex-column">
+                            {% for categoria in categorias %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'tienda' %}?id={{ categoria.id }}">{{ categoria.nombre }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </aside>
+                </div>
+                <div class="col-lg-8">
+                    <div class="row">
+                        <form action="" method="get">
+                            <div class="input-group mb-3 pb-1">
+                                <input class="form-control text-1" placeholder="Buscar..." name="s" id="s" type="text">
+                                <button type="submit" class="btn btn-dark text-1 p-2"><i class="fas fa-search m-2"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <br>
+                        <div class="col appear-animation" data-appear-animation="fadeInUpShorter"
+                             data-appear-animation-delay="300">
+
+                            <div class="owl-carousel owl-theme nav-inside nav-inside-edge nav-squared nav-with-transparency nav-dark nav-lg d-block overflow-hidden"
+                                 data-plugin-options="{'items': 1, 'margin': 10, 'loop': false, 'nav': true, 'dots': false, 'autoHeight': true}"
+                                 style="height: 510px;">
+                                {% for producto in productos %}
+                                    {% if forloop.counter < 5 %}
+                                        <div>
+                                            <div class="img-thumbnail border-0 border-radius-0 p-0 d-block">
+                                                <img src="media/{{ producto.imagen }}" class="img-fluid border-radius-0"
+                                                     alt="">
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="masonry-loader masonry-loader-loaded">
+                        <div class="row products product-thumb-info-list" data-plugin-masonry=""
+                             data-plugin-options="{'layoutMode': 'fitRows'}"
+                             style="position: relative; height: 1419.27px;">
+                            {% for producto in productos %}
+                                <div class="col-sm-4" style="position: absolute; left: 0px; top: 0px;">
+                                    <div class="product mb-0">
+                                        <div class="product-thumb-info border-0 mb-3">
+                                            <div class="product-thumb-info-badges-wrapper">
+                                                <span class="badge badge-ecommerce badge-success">Nuevo</span>
+                                            </div>
+                                            <div class="addtocart-btn-wrapper">
+                                                <a style="cursor: pointer" class="text-decoration-none addtocart-btn"
+                                                   title="Agregar al carrito"
+                                                   data-id="{{ producto.id }}"
+                                                   data-nombre="{{ producto.nombre }}"
+                                                   data-precio="{{ producto.precio }}"
+                                                   data-imagen="{{ producto.imagen }}"
+                                                   data-cantidad="1"
+                                                >
+                                                    <i class="icons icon-bag"></i>
+                                                </a>
+                                            </div>
+                                            <a href="/producto?id={{ producto.id }}">
+                                                <div class="product-thumb-info-image">
+                                                    <img alt="" class="img-fluid" src="media/{{ producto.imagen }}">
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <a href="/producto?id={{ producto.id }}"
+                                                   class="d-block text-uppercase text-decoration-none text-color-default text-color-hover-primary line-height-1 text-0 mb-1">{{ producto.categoria.nombre }}</a>
+                                                <h3 class="text-3-5 font-weight-medium font-alternative text-transform-none line-height-3 mb-0">
+                                                    <a href="producto?id={{ producto.id }}"
+                                                       class="text-color-dark text-color-hover-primary">{{ producto.nombre }}</a>
+                                                </h3>
+                                            </div>
+                                        </div>
+                                        <p class="price text-5 mb-3">
+                                            <span class="sale text-color-dark font-weight-semi-bold">${{ producto.precio }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col">
+                                <ul class="pagination float-end">
+                                    {% if productos.has_previous %}
+                                    <li class="page-item"><a class="page-link" href="{% if request.GET.id %}?id={{ request.GET.id }}&page={{ productos.previous_page_number }}{% else %}{% if request.GET.s %}?s={{ request.GET.s }}&page={{ productos.previous_page_number }}{% else %}?page={{ productos.previous_page_number }}{% endif %}{% endif %}"><i
+                                            class="fas fa-angle-left"></i></a></li>
+                                    {% endif %}
+
+                                    {% for pagina in paginator.num_pages|mul:"*" %}
+                                    <li class="page-item" id="{{ forloop.counter }}"><a class="page-link"  href="{% if request.GET.id %}?id={{ request.GET.id }}&page={{ forloop.counter }}{% else %}{% if request.GET.s %}?s={{ request.GET.s }}&page={{ forloop.counter }}{% else %}?page={{ forloop.counter }}{% endif %}{% endif %}">{{ forloop.counter }}</a></li>
+                                    {% endfor %}
+                                    {% if productos.has_next %}
+                                    <li class="page-item"><a class="page-link" href="{% if request.GET.id %}?id={{ request.GET.id }}&page={{ productos.next_page_number }}{% else %}{% if request.GET.s %}?s={{ request.GET.s }}&page={{ productos.next_page_number }}{% else %}?page={{ productos.next_page_number }}{% endif %}{% endif %}"><i
+                                            class="fas fa-angle-right"></i></a></li>
+                                    {% endif %}
+
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="bounce-loader">
+                            <div class="bounce1"></div>
+                            <div class="bounce2"></div>
+                            <div class="bounce3"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <aside class="sidebar">
+                        <h5 class="font-weight-semi-bold pt-4">Contactanos</h5>
+                        <ul class="list list-icons list-icons-style-2 mt-2">
+                            <li><i class="fas fa-map-marker-alt top-6"></i> <strong
+                                    class="text-dark">Dirección:</strong>
+                                Machala - El Oro Ecuador
+                            </li>
+                            <li><i class="fas fa-phone top-6"></i> <strong class="text-dark">Telefono:</strong> (593)
+                                990000009900
+                            </li>
+                            <li><i class="fas fa-envelope top-6"></i> <strong class="text-dark">Email:</strong> <a
+                                    href="mailto:mail@localhost.com">mail@localhost.com</a></li>
+                        </ul>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script>
+        $('.addtocart-btn').click(function () {
+            let id = $(this).data('id')
+            let nombre = $(this).data('nombre')
+            let precio = $(this).data('precio')
+            let imagen = $(this).data('imagen')
+            agregar(id, nombre, precio, imagen)
+        })
+
+        function agregar(id, nombre, precio, imagen) {
+            toastr.info('Se agrego ' + nombre + ' al carrito..!')
+            let objeto = {
+                id: id,
+                nombre: nombre,
+                precio: precio,
+                imagen: imagen,
+                cantidad: 0,
+            }
+            let item;
+            for(let i = 0; i <= localStorage.length; i++) {
+                let clave = localStorage.key(i)
+                if (parseInt(clave) == parseInt(id)) {
+                    console.log('si esta')
+                    item=JSON.parse(localStorage.getItem(clave))
+                    objeto.cantidad=item.cantidad+1
+                    break;
+                }
+                else{
+                    objeto.cantidad=1;
+                }
+            }
+            localStorage.setItem(id, JSON.stringify(objeto))
+        }
+
+        function leer() {
+            for (let i = 0; i < localStorage.length; i++) {
+                let clave = localStorage.key(i)
+                console.log(JSON.parse(localStorage.getItem(clave)))
+            }
+        }
+        leer()
+
+        function activar(){
+            $("#{{ request.GET.page }}").addClass('active');
+        }
+        activar()
+    </script>
+{% endblock %}

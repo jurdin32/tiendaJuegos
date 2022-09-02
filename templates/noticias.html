@@ -1,0 +1,177 @@
+{% extends 'index.html' %}
+{% block main %}
+    {% load mathfilters %}
+    <div role="main" class="main shop pt-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <aside class="sidebar">
+                        <form action="" method="get">
+                            <div class="input-group mb-3 pb-1">
+                                <input class="form-control text-1" placeholder="Buscar..." name="s" id="s" type="text">
+                                <button type="submit" class="btn btn-dark text-1 p-2"><i class="fas fa-search m-2"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <h5 class="font-weight-semi-bold pt-3">Noticias Recientes</h5>
+                        <ul class="nav nav-list flex-column">
+                            {% for noticia in noticias %}
+                                {% if forloop.counter < 16 %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="?id={{ noticia.id }}">{{ noticia.nombre }}</a>
+                                    </li>
+                                {% endif %}
+
+                            {% endfor %}
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'noticias' %}">Ver todas</a>
+                        </li>
+                        </ul>
+                    </aside>
+                </div>
+                <div class="col-lg-9">
+                    {% if noticia %}
+                        <div class="col">
+                            <div class="blog-posts single-post">
+
+                                <article class="post post-large blog-single-post border-0 m-0 p-0">
+                                    <div class="post-image ms-0">
+                                        <a href="{% url 'noticias' %}?id={{ noticia.id }}">
+                                            <img src="media/{{ noticia.imagen }}"
+                                                 class="img-fluid img-thumbnail img-thumbnail-no-borders rounded-0"
+                                                 alt="">
+                                        </a>
+                                    </div>
+
+                                    <div class="post-date ms-0">
+                                        <span class="day">{{ noticia.fecha|date:"d" }}</span>
+                                        <span class="month">{{ noticia.fecha|date:"M" }}</span>
+                                    </div>
+
+                                    <div class="post-content ms-0">
+
+                                        <h2 class="font-weight-semi-bold"><a href="{% url 'noticias' %}?id={{ noticia.id }}">{{ noticia.nombre|upper }}</a></h2>
+
+                                        <div class="post-meta">
+                                            <span><i class="far fa-user"></i> By <a href="#">{{ noticia.autor }}</a> </span>
+                                            <span><i class="far fa-folder"></i><a href="#">{{ noticia.tipo }}</a> </span>
+                                            <span><i class="far fa-comments"></i> <a href="#">{{ noticia.visitas }} Visitas</a></span>
+                                        </div>
+
+                                        <p>{{ noticia.descripcion|linebreaksbr }}</p>
+                                    </div>
+                                </article>
+
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="row">
+                            <div class="col appear-animation" data-appear-animation="fadeInUpShorter"
+                                 data-appear-animation-delay="300">
+
+                                <div class="owl-carousel owl-theme nav-inside nav-inside-edge nav-squared nav-with-transparency nav-dark nav-lg d-block overflow-hidden"
+                                     data-plugin-options="{'items': 1, 'margin': 10, 'loop': false, 'nav': true, 'dots': false, 'autoHeight': true}"
+                                     style="height: 510px;">
+                                    <div>
+                                        {% for noticia in noticias.object_list %}
+                                            {% if forloop.counter == 1 %}
+                                                <div class="img-thumbnail border-0 border-radius-0 p-0 d-block">
+                                                    <img src="media/{{ noticia.imagen }}"
+                                                         class="img-fluid border-radius-0"
+                                                         alt="">
+                                                </div>
+                                            {% endif %}
+
+                                        {% endfor %}
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="masonry-loader masonry-loader-loaded">
+                            <div class="row products product-thumb-info-list" data-plugin-masonry=""
+                                 data-plugin-options="{'layoutMode': 'fitRows'}"
+                                 style="position: relative; height: 1419.27px;">
+                                {% for noticia in noticias %}
+                                    <div id="comments" class="post-block mt-5 post-comments">
+                                        <ul class="comments">
+                                            <li>
+                                                <div class="comment">
+                                                    <div class="img-thumbnail img-thumbnail-no-borders d-none d-sm-block">
+                                                        <img class="avatar" alt="" src="media/{{ noticia.imagen }}">
+                                                    </div>
+                                                    <div class="comment-block">
+                                                        <div class="comment-arrow"></div>
+                                                        <span class="comment-by">
+																<strong>{{ noticia.nombre }}</strong>
+																<span class="float-end">
+																	<span> <a href="?id={{ noticia.id }}" style="text-decoration: none"><i
+                                                                            class="fas fa-chevron-circle-right"></i> Ver la nota</a></span>
+																</span>
+															</span>
+                                                        <p>{{ noticia.descripcion|linebreaksbr }}</p>
+                                                        <span class="date float-end">{{ noticia.fecha }}</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col">
+                                    <ul class="pagination float-end">
+                                        {% if noticias.has_previous %}
+                                            <li class="page-item"><a class="page-link"
+                                                                     href="{% if request.GET.id %}?id={{ request.GET.id }}&page=
+                                                                         {{ noticias.previous_page_number }}{% else %}{% if request.GET.s %}?s={{ request.GET.s }}&page=
+                                                                             {{ noticias.previous_page_number }}{% else %}?page={{ noticias.previous_page_number }}{% endif %}{% endif %}"><i
+                                                    class="fas fa-angle-left"></i></a></li>
+                                        {% endif %}
+
+                                        {% for pagina in paginator.num_pages|mul:"*" %}
+                                            <li class="page-item" id="{{ forloop.counter }}"><a class="page-link"
+                                                                                                href="{% if request.GET.id %}?id={{ request.GET.id }}&page=
+                                                                                                    {{ forloop.counter }}{% else %}{% if request.GET.s %}?s={{ request.GET.s }}&page=
+                                                                                                        {{ forloop.counter }}{% else %}?page={{ forloop.counter }}{% endif %}{% endif %}">{{ forloop.counter }}</a>
+                                            </li>
+                                        {% endfor %}
+                                        {% if noticias.has_next %}
+                                            <li class="page-item"><a class="page-link"
+                                                                     href="{% if request.GET.id %}?id={{ request.GET.id }}&page=
+                                                                         {{ noticias.next_page_number }}{% else %}{% if request.GET.s %}?s={{ request.GET.s }}&page=
+                                                                             {{ noticias.next_page_number }}{% else %}?page={{ noticias.next_page_number }}{% endif %}{% endif %}"><i
+                                                    class="fas fa-angle-right"></i></a></li>
+                                        {% endif %}
+
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="bounce-loader">
+                                <div class="bounce1"></div>
+                                <div class="bounce2"></div>
+                                <div class="bounce3"></div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        function activar() {
+            {% if request.GET.page %}
+                $("#{{ request.GET.page }}").addClass('active');
+            {% endif %}
+        }
+
+        activar()
+    </script>
+{% endblock %}

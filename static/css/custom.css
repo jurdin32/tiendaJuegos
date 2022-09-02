@@ -1,0 +1,10 @@
+#home, #tienda, #noticias, #nosotros, #registro, #carrito, #ses{
+    color:lightyellow !important;
+}
+
+#home:hover, #tienda:hover, #noticias:hover, #nosotros:hover, #registro:hover, #carrito:hover, #ses:hover{
+    color:lightyellow;
+}
+.active{
+    color:lightyellow;
+}

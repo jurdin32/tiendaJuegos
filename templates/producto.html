@@ -1,0 +1,84 @@
+{% extends 'index.html' %}
+{% block main %}
+    <div role="main" class="main shop pt-4">
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col">
+                    <ul class="breadcrumb breadcrumb-style-2 d-block text-4 mb-4">
+                        <li><a class="text-color-default text-color-hover-primary text-decoration-none">{{ producto.categoria.nombre }}</a></li>
+                        <li><a class="text-color-default text-color-hover-primary text-decoration-none">{{ producto.nombre }}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-5 mb-5 mb-md-0">
+                    <div class="thumb-gallery-wrapper">
+                        <div class="thumb-gallery-detail mb-3">
+                            <div>
+                                <img alt="" class="img-fluid" src="media/{{ producto.imagen }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="summary entry-summary position-relative">
+                        <h1 class="mb-0 font-weight-bold text-7">{{ producto.nombre}}</h1>
+                        <div class="divider divider-small">
+                            <hr class="bg-color-grey-scale-4">
+                        </div>
+
+                        <p class="price mb-3">
+                            <span class="sale text-color-dark">${{ producto.precio|floatformat:2}}</span>
+                        </p>
+
+                        <p class="text-3-5 mb-3">
+                            {{ producto.descripcion_corta }}
+                        </p>
+
+                        <ul class="list list-unstyled text-2">
+                            <li class="mb-0">DISPONIBILIDAD: <strong class="text-color-dark">EN ESTOCK</strong></li>
+                            <li class="mb-0">SKU: <strong class="text-color-dark">{{ producto.id|stringformat:'010d' }}</strong></li>
+                        </ul>
+                        <div class="d-flex align-items-center">
+                            <div class="addtocart-btn-wrapper">
+                                <a style="cursor: pointer" class="text-decoration-none addtocart-btn btn btn-danger"
+                                   title="Agregar al carrito"
+                                   data-id="{{ producto.id }}"
+                                   data-nombre="{{ producto.nombre }}"
+                                   data-precio="{{ producto.precio }}"
+                                   data-imagen="{{ producto.imagen }}"
+                                   data-cantidad="1"
+                                > Agregar al Carrito
+                                    <i class="icons icon-bag"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col">
+                    <div id="description"
+                         class="tabs tabs-simple tabs-simple-full-width-line tabs-product tabs-dark mb-2">
+                        <ul class="nav nav-tabs justify-content-start">
+                            <li class="nav-item"><a
+                                    class="nav-link active font-weight-bold text-3 text-uppercase py-2 px-3"
+                                    href="#productDescription" data-bs-toggle="tab">Descripción</a></li>
+                        </ul>
+                        <div class="tab-content p-0">
+                            <div class="tab-pane px-0 py-3 active" id="productDescription">
+                                <p>{{ producto.descripcion|linebreaksbr }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

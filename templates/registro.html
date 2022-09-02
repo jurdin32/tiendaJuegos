@@ -1,0 +1,71 @@
+{% extends 'index.html' %}
+{% block main %}
+    <div class="row">
+                <div class="col">
+                    <ul class="breadcrumb font-weight-bold text-6 justify-content-center my-5">
+                        <li class="text-transform-none me-2">
+                            <a class="text-decoration-none text-color-primary">Página de Registro</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <h2 class="font-weight-bold text-5 mb-0">Registrate gratis.!</h2>
+            <form action="/registro" id="frmSignUp" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="form-group col">
+                        <input
+                                type="email" value=""
+                                name="email"
+                                placeholder="Ingrese su email"
+                                class="form-control form-control-lg text-4"
+                                required="">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col">
+                        <input type="password"
+                               value=""
+                               name="p1"
+                               placeholder="Su contraseña"
+                               class="form-control form-control-lg text-4"
+                               required="">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col">
+                        <input type="password"
+                               value=""
+                               name="p2"
+                               placeholder="Repita su contraseña"
+                               class="form-control form-control-lg text-4"
+                               required="">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col">
+                        <button type="submit"
+                                class="btn btn-dark btn-modern w-100 text-uppercase rounded-0 font-weight-bold text-3 py-3"
+                                data-loading-text="Loading...">Registrarse
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script>
+    {% if messages %}
+        {% for message in messages %}
+        toastr.info('{{ message }}..!')
+        {% endfor %}
+    {% endif %}
+    </script>
+{% endblock %}

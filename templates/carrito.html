@@ -1,0 +1,184 @@
+{% extends 'index.html' %}
+{% block main %}
+    <div role="main" class="main shop pb-4">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <ul class="breadcrumb font-weight-bold text-6 justify-content-center my-5">
+                        <li class="text-transform-none me-2">
+                            <a class="text-decoration-none text-color-primary">Items</a>
+                        </li>
+                        <li class="text-transform-none text-color-grey-lighten me-2">
+                            <a class="text-decoration-none text-color-grey-lighten text-color-hover-primary">Carrito de
+                                Compras</a>
+                        </li>
+                        <li class="text-transform-none text-color-grey-lighten">
+                            <a class="text-decoration-none text-color-grey-lighten text-color-hover-primary">Completar
+                                la orden</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row pb-4 mb-5">
+                <div class="col-lg-8 mb-5 mb-lg-0">
+                    <form method="post" action="">
+                        <div class="table-responsive">
+                            <table class="shop_table cart">
+                                <thead>
+                                <tr class="text-color-dark">
+                                    <th class="product-thumbnail" width="15%">
+                                        &nbsp;
+                                    </th>
+                                    <th class="product-name text-uppercase" width="30%">
+                                        Producto
+                                    </th>
+                                    <th class="product-price text-uppercase" width="15%">
+                                        Precio
+                                    </th>
+                                    <th class="product-quantity text-uppercase" width="20%">
+                                        Cantidad
+                                    </th>
+                                    <th class="product-subtotal text-uppercase text-end" width="20%">
+                                        Subtotal
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody id="tabla">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-4 position-relative">
+                    <div class="card border-width-3 border-radius-0 border-color-hover-dark" data-plugin-sticky
+                         data-plugin-options="{'minWidth': 991, 'containerSelector': '.row', 'padding': {'top': 85}}">
+                        <div class="card-body">
+                            <h4 class="font-weight-bold text-uppercase text-4 mb-3">Total del Carrito</h4>
+                            <table class="shop_table cart-totals mb-4">
+                                <tbody>
+                                <tr class="total">
+                                    <td>
+                                        <strong class="text-color-dark text-3-5">Total a pagar</strong>
+                                    </td>
+                                    <td class="text-end">
+                                        <strong class="text-color-dark"><span class="amount text-color-dark text-5" id="amount"></span></strong>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <a href="{% url 'pagar' %}"
+                               class="btn btn-dark btn-modern w-100 text-uppercase bg-color-hover-primary border-color-hover-primary border-radius-0 text-3 py-3">
+                                Continuar con el Pago <i class="fas fa-arrow-right ms-2"></i></a>
+                            <br><br>
+                            <a onclick="limpiar()" class="btn btn-dark btn-modern w-100 text-uppercase bg-color-hover-primary border-color-hover-primary border-radius-0 text-3 py-3">
+                                Limpiar Carrito <i class="fas fa-trash ms-2"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        function leer() {
+            for (let i = 0; i < localStorage.length; i++) {
+                let clave = localStorage.key(i)
+                let item=JSON.parse(localStorage.getItem(clave))
+                console.log(item)
+                let tr=document.createElement('tr')
+                let td1=document.createElement('td')
+                tr.className='cart_table_item'
+                tr.appendChild(td1)
+                td1.className='product-thumbnail'
+                td1.innerHTML='<div class="product-thumbnail-wrapper">' +
+                    '<a href="#" class="product-thumbnail-remove" onclick="eliminar('+item.id+')" title="Eliminar Producto">' +
+                    '<i class="fas fa-times"></i> ' +
+                    '</a><a href="{% url 'producto' %}?id='+item.id+'" class="product-thumbnail-image" title="Photo Camera">' +
+                    '<img width="90" height="90" alt="" class="img-fluid" src="/media/'+item.imagen+'"></a></div>'
+                let td2=document.createElement('td')
+                td2.className='product-name'
+                td2.innerHTML='<a href="shop-product-sidebar-right.html" class="font-weight-semi-bold text-color-dark text-color-hover-primary text-decoration-none">'+item.nombre+'</a>'
+                tr.appendChild(td2)
+
+                let td3=document.createElement('td')
+                td3.className='product-price'
+                td3.innerHTML='<span class="amount font-weight-medium text-color-grey">'+item.precio+'</span>'
+                tr.appendChild(td3)
+
+                let td4=document.createElement('td')
+                td4.className='product-quantity'
+                td4.innerHTML='<div class="quantity float-none m-0"><input onclick="menos('+item.id+')" type="button" class="minus text-color-hover-light bg-color-hover-primary border-color-hover-primary" value="-"><input type="text" readonly class="input-text qty text" title="Qty" id="'+item.id+'" value="'+item.cantidad+'" name="quantity" min="1" step="1"><input onclick="mas('+item.id+')" type="button" class="plus text-color-hover-light bg-color-hover-primary border-color-hover-primary" value="+"></div>'
+                tr.appendChild(td4)
+
+                let td5=document.createElement('td')
+                td5.className='product-subtotal text-end'
+                td5.innerHTML='<span class="amount sub'+item.id+' text-color-dark font-weight-bold text-4">'+(parseFloat(item.cantidad)*parseFloat(item.precio)).toFixed(2)+'</span>'
+                tr.appendChild(td5)
+
+                let tabla=document.getElementById('tabla')
+                tabla.appendChild(tr)
+            }
+            calcularTotal()
+        }
+        leer()
+        function calcularTotal(){
+            let amount=document.getElementById('amount')
+            let suma=0
+            for (let i = 0; i < localStorage.length; i++) {
+                let clave = localStorage.key(i)
+                let item=JSON.parse(localStorage.getItem(clave))
+                suma+=(parseFloat(item.cantidad)*parseFloat(item.precio))
+            }
+            console.log(suma.toFixed(2))
+            amount.innerHTML='<span>'+suma.toFixed(2)+'</span>'
+        }
+        function eliminar(dato){
+            localStorage.removeItem(dato)
+            location.href='carrito'
+        }
+        function limpiar() {
+            localStorage.clear()
+            location.href='carrito'
+        }
+
+        function menos(id) {
+            let item=JSON.parse(localStorage.getItem(id))
+            let objeto = {
+                id: item.id,
+                nombre: item.nombre,
+                precio: item.precio,
+                imagen: item.imagen,
+                cantidad: parseInt(item.cantidad),
+            }
+            console.log(objeto)
+            if(parseInt(objeto.cantidad)>1) {
+                objeto.cantidad -= 1
+                localStorage.setItem(id, JSON.stringify(objeto))
+                console.log(JSON.parse(localStorage.getItem(id)))
+                $("#"+id).val(objeto.cantidad)
+                $(".sub"+id).text((parseFloat(objeto.cantidad)*parseFloat(objeto.precio)).toFixed(2))
+                calcularTotal()
+            }
+        }
+        function mas(id) {
+            let item=JSON.parse(localStorage.getItem(id))
+            let objeto = {
+                id: item.id,
+                nombre: item.nombre,
+                precio: item.precio,
+                imagen: item.imagen,
+                cantidad: parseInt(item.cantidad),
+            }
+            objeto.cantidad +=1
+            localStorage.setItem(id, JSON.stringify(objeto))
+            //location.href = 'carrito'
+            console.log(JSON.parse(localStorage.getItem(id)))
+            $("#"+id).val(objeto.cantidad)
+            $(".sub"+id).text((parseFloat(objeto.cantidad)*parseFloat(objeto.precio)).toFixed(2))
+            calcularTotal()
+        }
+
+    </script>
+{% endblock %}
